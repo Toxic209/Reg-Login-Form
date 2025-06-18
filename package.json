@@ -1,0 +1,23 @@
+{
+  "name": "reg-login-form",
+  "version": "1.0.0",
+  "description": "A registration and login page based on MERN stack.",
+  "keywords": [
+    "login",
+    "registration",
+    "authentication"
+  ],
+  "license": "ISC",
+  "author": "Rohit Pandey",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "node": "^24.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
