@@ -4,11 +4,15 @@ import cookieParser from "cookie-parser";
 dotenv.config({
     path : './.env'
 })
-import connectDB from "./db/index.js";
 
 const app = express();
 app.use(express.json({limit:"20kb"}))
-app.use(express.urlencoded())
+app.use(express.urlencoded({extended: true}))
+app.use(express.static("public"))
 app.use(cookieParser());
+
+import { router } from "./routes/user.route.js";
+
+app.use("/api/v1/users", router)
 
 export default app;

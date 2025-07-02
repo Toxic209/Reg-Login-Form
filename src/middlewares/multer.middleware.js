@@ -1,11 +1,13 @@
 import multer from "multer"
+import path from "path";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./Public/Temp")
+    const fullPath = path.resolve("./Public/Temp");
+    cb(null, fullPath)
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname + '-' + uniqueSuffix)
+    cb(null, `${Date.now()}-${file.originalname}`)
   }
 })
 
