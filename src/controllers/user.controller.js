@@ -230,6 +230,28 @@ const changeUserData = AsyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user, "User Data Updated!"))
 })
 
+const updateAvatar = AsyncHandler(async(req, res) => {
+    const avatarLocalPath = req.file?.path;
+
+    if (!avatarLocalPath) {
+        throw new ApiError(401, "No avatar path found!")
+    }
+
+    const avatar = uploadOnCloudinary(avatarLocalPath)
+
+    if (!avatar) {
+        throw new ApiError(400, "Error during avatar upload")
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, {
+        $set: {
+            avatar: avatar.url
+        }
+    }, {new: true}).select("-password")
+
+    return res.status(200).json(new ApiResponse(200, user, "Avatar updated Successfully!"))
+})
+    
 export {
     registerUser,
     loginUser,
@@ -237,5 +259,6 @@ export {
     refreshAccessToken,
     changePassword,
     getCurrentUser,
-    changeUserData
+    changeUserData, 
+    updateAvatar
 }
