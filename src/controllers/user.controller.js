@@ -27,8 +27,7 @@ const generateRefreshAndAccessToken = async (userId) => {
 }
 
 const registerUser = AsyncHandler(async (req, res) => {
-
-    const { username, password, email, } = req.body;
+    const { username, password, email } = req.body;
     // validate the user inputs.
     if ([username, password, email].some((field) => field?.trim === "")) {
         throw new ApiError(400, "All fields are Required!")
@@ -66,25 +65,24 @@ const registerUser = AsyncHandler(async (req, res) => {
         username: username.toLowerCase(),
         password,
         email,
-        avatar: avatarLocalPath
+        avatar
     })
     // remove the password and refresh token fields from the db entry.
-    const createdUser = await User.findById(user._id).select("-password -refreshToken")
+    const createdUser = await User.findById(user._id).select("-password")
     // check if the user is created.
     if (!createdUser) {
         throw new ApiError(500, "Something went wrong while registering the User.")
     }
     // if created, return response.
     return res.status(200).json(
-        new ApiResponse(200, createdUser, "User Registered Successfully!")
-    )
+        new ApiResponse(200, createdUser, "User Registered Successfully!"))
 })
 
 const loginUser = AsyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!(email || username)) {
-        throw new ApiError(400, "Username & Email is Required!")
+        throw new ApiError(400, "Username or Email is Required!")
     }
 
     const user = await User.findOne({
@@ -103,14 +101,15 @@ const loginUser = AsyncHandler(async (req, res) => {
 
 
     const { accessToken, refreshToken } = await generateRefreshAndAccessToken(user._id);
-
+    
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
-
+    
     const cookieOptions = {
         httpOnly: true,
-        secure: true
+        secure: true,         
+        sameSite: "None"
     }
-
+    
     return res
         .status(200)
         .cookie("refreshToken", refreshToken, cookieOptions)
@@ -202,8 +201,8 @@ const changePassword = AsyncHandler(async (req, res) => {
 
 const getCurrentUser = AsyncHandler(async (req, res) => {
     if (!req.user) {
-    throw new ApiError(401, "User not authenticated");
-  }
+        throw new ApiError(401, "User not authenticated");
+    }
     return res.json(new ApiResponse(200, req.user, "Current user fetched!"))
 })
 
@@ -230,7 +229,7 @@ const changeUserData = AsyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user, "User Data Updated!"))
 })
 
-const updateAvatar = AsyncHandler(async(req, res) => {
+const updateAvatar = AsyncHandler(async (req, res) => {
     const avatarLocalPath = req.file?.path;
 
     if (!avatarLocalPath) {
@@ -247,11 +246,11 @@ const updateAvatar = AsyncHandler(async(req, res) => {
         $set: {
             avatar: avatar.url
         }
-    }, {new: true}).select("-password")
+    }, { new: true }).select("-password")
 
     return res.status(200).json(new ApiResponse(200, user, "Avatar updated Successfully!"))
 })
-    
+
 export {
     registerUser,
     loginUser,
@@ -259,6 +258,6 @@ export {
     refreshAccessToken,
     changePassword,
     getCurrentUser,
-    changeUserData, 
+    changeUserData,
     updateAvatar
 }

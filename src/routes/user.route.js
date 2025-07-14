@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
-    registerUser, 
-    loginUser, 
-    logoutUser, 
-    refreshAccessToken, 
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
     changePassword,
     getCurrentUser,
     changeUserData,
@@ -15,12 +15,23 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/register").post(upload.fields([
-    {
-        name: "avatar",
-        maxCount: 1
-    }
-]), registerUser);
+
+router.route("/register").post((req, res, next) => {
+    next();
+}, (req, res, next) => {
+    upload.fields([
+        { name: "avatar", maxCount: 1 }
+    ])(req, res, function (err) {
+        if (err) {
+            return res.status(500).json({ message: "Multer failed", error: err.message });
+        }
+        console.log("✅ Multer succeeded!");
+        next();
+    });
+}, (req, res, next) => {
+    next();
+},
+    registerUser);
 
 router.route("/login").post(loginUser)
 
