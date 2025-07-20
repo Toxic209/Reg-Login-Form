@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Details</title>
+    <style>
+        .UpdateSection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #UpdateForm {
+            display: flex;
+            justify-items: center;
+            align-items: center;
+            gap: 10px;
+            flex-direction: column;
+        }
+    </style>
+    <script src="update-details.js" defer></script>
+</head>
+<body>
+    <div class="UpdateSection">
+        <form id="UpdateForm">
+            <input type="text" placeholder="username" name="username" id="username" required />
+            <input type="text" placeholder="email" name="email" id="email"/>
+            <button id="Update" type="submit">Update</button>
+        </form>
+    </div>
+</body>
+</html>
